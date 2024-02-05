@@ -42,7 +42,7 @@ We want to create a two-column table that contains all possible combinations of 
 
 To do this, we can use the following formula:
 
-```
+```excel
 =LET(
     a, A2:A15,
     b, B2:B15,
@@ -70,38 +70,6 @@ Similarly, we create another sequence of numbers that will help us index the val
 Then, we use the `INDEX` function to return the values from the second range (`b`), indexed by `col_two_seq`. This will create a range of cells that contains the values from `b`, repeated and wrapped around according to `col_two_seq`. We assign this range to the name `col_two_labels`.
 
 Finally, we use the `HSTACK` function to stack the two ranges horizontally, creating a two-column table that contains all possible combinations of `a` and `b`. We return this table as the result of the `LET` function.
-
-## How to Convert the Formula into a LAMBDA Function
-
-If you want to reuse this formula for different ranges of values, you can convert it into a LAMBDA function, which is a new feature in Excel 365 that allows you to create your own custom functions. To do this, you can follow these steps:
-
-- Go to the Formulas tab, and click on Name Manager.
-- Click on New, and enter a name for your function, such as `COMBINE_RANGES`.
-- In the Refers to box, enter the formula that we created above, but replace the references to `a` and `b` with the parameters `_a` and `_b`. For example, `=LET(_a, _a, _b, _b, ...)`.
-- Click on OK, and close the Name Manager.
-- To use the function, enter `=COMBINE_RANGES(range1, range2)` in any cell, where `range1` and `range2` are the two ranges of values that you want to combine. Columns from a table can also be referenced using the syntax of `TableName[NameOfColumn]`
-
-```
-    =LAMBDA(
-        _a, _b,
-            LET(
-                a, _a,
-                b, _b,
-                a_count, ROWS(UNIQUE(a)),
-                b_count, ROWS(UNIQUE(b)),
-                total_rows, a_count * b_count,
-                col_one_seq, SORT(MOD(SEQUENCE(total_rows, , 0), a_count) + 1),
-                col_one_labels, INDEX(a, col_one_seq),
-                col_two_seq, MOD(SEQUENCE(total_rows, , 0), b_count) + 1,
-                col_two_labels, INDEX(b, col_two_seq),
-                HSTACK(col_one_labels, col_two_labels)
-            ),
-    )
-```
-
-## Conclusion
-
-In this blog post, we learned how to use the `LET`, `UNIQUE`, `ROWS`, `SEQUENCE`, `MOD`, `SORT`, `INDEX`, and `HSTACK` functions to create a two-column table with all possible combinations of two ranges in Excel. We also learned how to convert this formula into a LAMBDA function, which can make it easier to reuse and maintain. 
 
 
 
